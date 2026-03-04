@@ -4,18 +4,21 @@ import { useEffect, useState } from "react"
 import { Compass, Sparkles } from "lucide-react"
 import { GoldDivider } from "./gold-divider"
 
-function useCountdown(targetDate: Date) {
-  const [timeLeft, setTimeLeft] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
+function useCountdown(targetTimestamp: number) {
+  const [timeLeft, setTimeLeft] = useState(() => {
+    const diff = targetTimestamp - Date.now()
+    if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 }
+    return {
+      days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+      hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+      minutes: Math.floor((diff / (1000 * 60)) % 60),
+      seconds: Math.floor((diff / 1000) % 60),
+    }
   })
 
   useEffect(() => {
     function calculate() {
-      const now = new Date()
-      const diff = targetDate.getTime() - now.getTime()
+      const diff = targetTimestamp - Date.now()
 
       if (diff <= 0) {
         setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 })
@@ -30,17 +33,17 @@ function useCountdown(targetDate: Date) {
       })
     }
 
-    calculate()
     const interval = setInterval(calculate, 1000)
     return () => clearInterval(interval)
-  }, [targetDate])
+  }, [targetTimestamp])
 
   return timeLeft
 }
 
+const BIRTHDAY_TIMESTAMP = new Date("2026-03-07T00:00:00").getTime()
+
 export function HeroSection() {
-  const birthday = new Date("2026-03-07T00:00:00")
-  const { days, hours, minutes, seconds } = useCountdown(birthday)
+  const { days, hours, minutes, seconds } = useCountdown(BIRTHDAY_TIMESTAMP)
 
   return (
     <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 py-20">
