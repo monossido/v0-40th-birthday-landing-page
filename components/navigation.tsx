@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Menu, X, Compass } from "lucide-react"
 
 const links = [
@@ -9,9 +9,37 @@ const links = [
   { href: "#aggiornamenti", label: "Aggiornamenti" },
 ]
 
+const sectionIds = links.map((l) => l.href.slice(1))
+
+function useScrollSpy(ids: string[], offset = 120) {
+  const [activeId, setActiveId] = useState<string>("")
+
+  useEffect(() => {
+    function onScroll() {
+      const scrollY = window.scrollY + offset
+
+      let current = ""
+      for (const id of ids) {
+        const el = document.getElementById(id)
+        if (el && el.offsetTop <= scrollY) {
+          current = id
+        }
+      }
+      setActiveId(current)
+    }
+
+    onScroll()
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [ids, offset])
+
+  return activeId
+}
+
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const activeId = useScrollSpy(sectionIds)
 
   useEffect(() => {
     function onScroll() {
@@ -20,6 +48,21 @@ export function Navigation() {
     window.addEventListener("scroll", onScroll, { passive: true })
     return () => window.removeEventListener("scroll", onScroll)
   }, [])
+
+  const handleClick = useCallback(
+    (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+      e.preventDefault()
+      setIsOpen(false)
+      const id = href.slice(1)
+      const el = document.getElementById(id)
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" })
+        // Update URL hash without jumping
+        window.history.pushState(null, "", href)
+      }
+    },
+    []
+  )
 
   return (
     <nav
@@ -35,6 +78,11 @@ export function Navigation() {
         {/* Logo */}
         <a
           href="#"
+          onClick={(e) => {
+            e.preventDefault()
+            window.scrollTo({ top: 0, behavior: "smooth" })
+            window.history.pushState(null, "", " ")
+          }}
           className="flex items-center gap-2 text-foreground transition-opacity hover:opacity-70"
           aria-label="Torna in cima alla pagina"
         >
@@ -46,15 +94,28 @@ export function Navigation() {
 
         {/* Desktop links */}
         <div className="hidden items-center gap-8 md:flex">
-          {links.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-            >
-              {link.label}
-            </a>
-          ))}
+          {links.map((link) => {
+            const isActive = activeId === link.href.slice(1)
+            return (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={(e) => handleClick(e, link.href)}
+                className={`relative text-sm transition-colors duration-200 ${
+                  isActive
+                    ? "font-medium text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {link.label}
+                <span
+                  className={`absolute -bottom-1 left-0 h-px bg-gold transition-all duration-300 ${
+                    isActive ? "w-full" : "w-0"
+                  }`}
+                />
+              </a>
+            )
+          })}
         </div>
 
         {/* Mobile toggle */}
@@ -76,16 +137,26 @@ export function Navigation() {
       {isOpen && (
         <div className="border-t border-gold/10 bg-parchment/95 backdrop-blur-md md:hidden">
           <div className="flex flex-col gap-1 px-6 py-4">
-            {links.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={() => setIsOpen(false)}
-                className="rounded-md px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-parchment-dark hover:text-foreground"
-              >
-                {link.label}
-              </a>
-            ))}
+            {links.map((link) => {
+              const isActive = activeId === link.href.slice(1)
+              return (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={(e) => handleClick(e, link.href)}
+                  className={`rounded-md px-3 py-2.5 text-sm transition-colors ${
+                    isActive
+                      ? "bg-parchment-dark font-medium text-foreground"
+                      : "text-muted-foreground hover:bg-parchment-dark hover:text-foreground"
+                  }`}
+                >
+                  {isActive && (
+                    <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-gold" />
+                  )}
+                  {link.label}
+                </a>
+              )
+            })}
           </div>
         </div>
       )}
