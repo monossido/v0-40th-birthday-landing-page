@@ -4,40 +4,29 @@ import { useEffect, useState } from "react"
 import { Compass, Sparkles } from "lucide-react"
 import { GoldDivider } from "./gold-divider"
 
+function computeRemaining(targetTimestamp: number) {
+  const diff = Math.max(0, targetTimestamp - Date.now())
+  return Math.floor(diff / 1000)
+}
+
 function useCountdown(targetTimestamp: number) {
-  const [timeLeft, setTimeLeft] = useState(() => {
-    const diff = targetTimestamp - Date.now()
-    if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 }
-    return {
-      days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-      hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
-      minutes: Math.floor((diff / (1000 * 60)) % 60),
-      seconds: Math.floor((diff / 1000) % 60),
-    }
-  })
+  const [totalSeconds, setTotalSeconds] = useState(() =>
+    computeRemaining(targetTimestamp)
+  )
 
   useEffect(() => {
-    function calculate() {
-      const diff = targetTimestamp - Date.now()
-
-      if (diff <= 0) {
-        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 })
-        return
-      }
-
-      setTimeLeft({
-        days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
-        minutes: Math.floor((diff / (1000 * 60)) % 60),
-        seconds: Math.floor((diff / 1000) % 60),
-      })
-    }
-
-    const interval = setInterval(calculate, 1000)
-    return () => clearInterval(interval)
+    const id = setInterval(() => {
+      setTotalSeconds(computeRemaining(targetTimestamp))
+    }, 1000)
+    return () => clearInterval(id)
   }, [targetTimestamp])
 
-  return timeLeft
+  const days = Math.floor(totalSeconds / 86400)
+  const hours = Math.floor((totalSeconds % 86400) / 3600)
+  const minutes = Math.floor((totalSeconds % 3600) / 60)
+  const seconds = totalSeconds % 60
+
+  return { days, hours, minutes, seconds }
 }
 
 const BIRTHDAY_TIMESTAMP = new Date("2026-03-07T00:00:00").getTime()
