@@ -114,6 +114,7 @@ export function getAnalyticsSummary(): AnalyticsSummary {
     uniqueScrollVisitors,
     easterEggUnlocks,
     uniqueEasterEggVisitors,
-    scrollCompletionRate: views > 0 ? scrollCompletions / views : 0,
+    scrollCompletionRate:
+      uniqueVisitors > 0 ? scrollCompletions / uniqueVisitors : 0,
   };
 }
