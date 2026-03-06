@@ -1,29 +1,31 @@
+"use client";
+
 import {
   Flame,
   Monitor,
-  Moon,
   Pizza,
   Dices,
   Music,
   Beef,
   Tent,
   Swords,
-  Wine,
-} from "lucide-react"
-import { GoldDivider } from "./gold-divider"
-import type { LucideIcon } from "lucide-react"
+} from "lucide-react";
+import { GoldDivider } from "./gold-divider";
+import { useEasterEgg } from "@/contexts/easter-egg-context";
+import type { LucideIcon } from "lucide-react";
+import type { ReactNode } from "react";
 
 interface TimelineEvent {
-  time: string
-  title: string
-  description: string
-  icon: LucideIcon
-  day: 1 | 2
+  time: string;
+  title: string;
+  description: ReactNode;
+  icon: LucideIcon;
+  day: 1 | 2;
 }
 
 const events: TimelineEvent[] = [
   {
-    time: "18:00",
+    time: "19:00",
     title: "Aglio, Olio e Peperoncino",
     description:
       "Si parte con un classico della tradizione: pasta fatta come si deve, per scaldarci prima della battaglia.",
@@ -42,15 +44,19 @@ const events: TimelineEvent[] = [
     time: "Notte",
     title: "Sotto le Stelle",
     description:
-      "Camping in tenda nel giardino della villa. Storie, risate e il cielo stellato sopra di noi.",
+      "Camping in tenda nel giardino della villa. Che le stelle ti guidino sempre.",
     icon: Tent,
     day: 1,
   },
   {
     time: "12:30",
     title: "Gara di Pizze",
-    description:
-      "Pizza in teglia vs Pizza tonda: due scuole di pensiero si affrontano. Voi da che parte state?",
+    description: (
+      <>
+        Pizza in teglia vs Pizza napoletana vs Pizza romana: diverse scuole di
+        pensiero si affrontano. <strong>Vuoi portare il tuo impasto?</strong>
+      </>
+    ),
     icon: Pizza,
     day: 2,
   },
@@ -65,8 +71,7 @@ const events: TimelineEvent[] = [
   {
     time: "18:00",
     title: "Aperitivo \u2014 Music & Vibes",
-    description:
-      "Musica, spritz e il sole del tardo pomeriggio. Il momento perfetto per ricaricare le energie.",
+    description: "Mi pentirò dell'accompagnamento musicale scelto?",
     icon: Music,
     day: 2,
   },
@@ -74,15 +79,76 @@ const events: TimelineEvent[] = [
     time: "20:00",
     title: "Grigliata e Sapori dal Mondo",
     description:
-      "Il gran finale: una grigliata epica con sapori da ogni angolo della Terra di Mezzo... e oltre.",
+      "Il gran finale: una cena epica con sapori da ogni angolo della Terra di Mezzo... e oltre.",
     icon: Beef,
     day: 2,
   },
-]
+];
+
+const punkEvents: TimelineEvent[] = [
+  {
+    time: "19:00",
+    title: "Pasta di Chi Sa Cucinare",
+    description:
+      "Mentre i food influencer lucidano il piatto per lo scatto perfetto, noi mangiamo. Aglio, olio, peperoncino \u2014 niente filtri, niente ring light.",
+    icon: Flame,
+    day: 1,
+  },
+  {
+    time: "21:00",
+    title: "Abbattere il Walled Garden",
+    description:
+      "Apple ti vende una prigione dorata e ti convince che sia un palazzo. Stasera giochiamo su macchine libere. COD2 e Quake \u2014 niente App Store, niente abbonamenti.",
+    icon: Monitor,
+    day: 1,
+  },
+  {
+    time: "Notte",
+    title: "Dormire sotto il Cielo Vero",
+    description:
+      "I travel influencer \u201cvivono l\u2019avventura\u201d da un hotel 5 stelle con il tramonto fotogenico. Noi dormiamo in tenda, sotto stelle vere, senza geotag.",
+    icon: Tent,
+    day: 1,
+  },
+  {
+    time: "12:30",
+    title: "Processo agli Impostori",
+    description:
+      "Chi mette l\u2019ananas sulla pizza non ha diritto di voto. I food influencer non sanno fare la pasta. Qui si giudica l\u2019impasto, non il filtro.",
+    icon: Pizza,
+    day: 2,
+  },
+  {
+    time: "15:00",
+    title: "Chi sono i Veri Lupi?",
+    description:
+      "Israele? USA? Trump? Il villaggio ha molti lupi. Qualcuno porta il controllo sulla magistratura, qualcuno porta bombe, qualcuno porta i pedofili. Voi decidete.",
+    icon: Swords,
+    day: 2,
+  },
+  {
+    time: "18:00",
+    title: "Aperitivo contro l\u2019Impero",
+    description:
+      "Bevi. Pensa. Gli USA hanno 800 basi militari nel mondo e chiamano gli altri \u201cminaccia\u201d. Alla salute di chi ancora fa domande.",
+    icon: Music,
+    day: 2,
+  },
+  {
+    time: "20:00",
+    title: "Grigliata del Mondo Libero",
+    description:
+      "Cibo fatto in casa, fuoco, persone vere. Niente influencer, niente filtri, niente Israele che ci dice cosa fare. Il gran finale \u2014 come si deve.",
+    icon: Beef,
+    day: 2,
+  },
+];
 
 export function TimelineSection() {
-  const day1Events = events.filter((e) => e.day === 1)
-  const day2Events = events.filter((e) => e.day === 2)
+  const { isActive } = useEasterEgg();
+  const activeEvents = isActive ? punkEvents : events;
+  const day1Events = activeEvents.filter((e) => e.day === 1);
+  const day2Events = activeEvents.filter((e) => e.day === 2);
 
   return (
     <section id="programma" className="relative px-6 py-20 md:py-28">
@@ -93,16 +159,22 @@ export function TimelineSection() {
             <Dices className="h-5 w-5 text-gold" strokeWidth={1.5} />
           </div>
           <h2 className="font-serif text-3xl font-bold text-foreground md:text-5xl">
-            Il Programma
+            {isActive ? "Il Manifesto" : "Il Programma"}
           </h2>
           <GoldDivider />
           <p className="mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
-            {"Ogni grande avventura ha le sue tappe"}
+            {isActive
+              ? "Il sistema crolla da solo \u2014 noi acceleriamo il processo"
+              : "Casa è dietro, il mondo è avanti, e ci sono molte vie da seguire"}
           </p>
         </div>
 
         {/* Day 1 */}
-        <DayHeader day={1} title="Sabato 23 Maggio" subtitle="L'Arrivo" />
+        <DayHeader
+          day={1}
+          title="Giorno 1"
+          subtitle={isActive ? "L\u2019Infiltrazione" : "L\u2019Arrivo"}
+        />
         <div className="relative ml-4 border-l border-gold/20 pl-8 md:ml-8">
           {day1Events.map((event, index) => (
             <TimelineItem
@@ -116,7 +188,11 @@ export function TimelineSection() {
         <div className="my-12" />
 
         {/* Day 2 */}
-        <DayHeader day={2} title="Domenica 24 Maggio" subtitle="La Grande Giornata" />
+        <DayHeader
+          day={2}
+          title="Giorno 2"
+          subtitle={isActive ? "La Resa dei Conti" : "La Grande Giornata"}
+        />
         <div className="relative ml-4 border-l border-gold/20 pl-8 md:ml-8">
           {day2Events.map((event, index) => (
             <TimelineItem
@@ -128,7 +204,7 @@ export function TimelineSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 function DayHeader({
@@ -136,9 +212,9 @@ function DayHeader({
   title,
   subtitle,
 }: {
-  day: number
-  title: string
-  subtitle: string
+  day: number;
+  title: string;
+  subtitle: string;
 }) {
   return (
     <div className="mb-8 flex items-center gap-4">
@@ -154,17 +230,17 @@ function DayHeader({
         </p>
       </div>
     </div>
-  )
+  );
 }
 
 function TimelineItem({
   event,
   isLast,
 }: {
-  event: TimelineEvent
-  isLast: boolean
+  event: TimelineEvent;
+  isLast: boolean;
 }) {
-  const Icon = event.icon
+  const Icon = event.icon;
 
   return (
     <div className={`relative ${isLast ? "pb-0" : "pb-10"}`}>
@@ -190,5 +266,5 @@ function TimelineItem({
         </p>
       </div>
     </div>
-  )
+  );
 }

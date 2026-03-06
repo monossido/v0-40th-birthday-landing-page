@@ -1,68 +1,78 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useCallback } from "react"
-import { Menu, X, Compass } from "lucide-react"
+import { useState, useEffect, useCallback } from "react";
+import { Menu, X, Compass } from "lucide-react";
+import { useEasterEgg } from "@/contexts/easter-egg-context";
 
 const links = [
   { href: "#luogo", label: "Il Luogo" },
   { href: "#programma", label: "Programma" },
   { href: "#aggiornamenti", label: "Aggiornamenti" },
-]
+];
 
-const sectionIds = links.map((l) => l.href.slice(1))
+const punkLinks = [
+  { href: "#luogo", label: "Il Bunker" },
+  { href: "#programma", label: "Il Manifesto" },
+  { href: "#aggiornamenti", label: "Dispacci" },
+];
+
+const sectionIds = links.map((l) => l.href.slice(1));
 
 function useScrollSpy(ids: string[], offset = 120) {
-  const [activeId, setActiveId] = useState<string>("")
+  const [activeId, setActiveId] = useState<string>("");
 
   useEffect(() => {
     function onScroll() {
-      const scrollY = window.scrollY + offset
+      const scrollY = window.scrollY + offset;
 
-      let current = ""
+      let current = "";
       for (const id of ids) {
-        const el = document.getElementById(id)
+        const el = document.getElementById(id);
         if (el && el.offsetTop <= scrollY) {
-          current = id
+          current = id;
         }
       }
-      setActiveId(current)
+      setActiveId(current);
     }
 
-    onScroll()
-    window.addEventListener("scroll", onScroll, { passive: true })
-    return () => window.removeEventListener("scroll", onScroll)
-  }, [ids, offset])
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [ids, offset]);
 
-  return activeId
+  return activeId;
 }
 
 export function Navigation() {
-  const [isOpen, setIsOpen] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
-  const activeId = useScrollSpy(sectionIds)
+  const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const activeId = useScrollSpy(sectionIds);
+  const { isActive } = useEasterEgg();
+
+  const activeLinks = isActive ? punkLinks : links;
 
   useEffect(() => {
     function onScroll() {
-      setScrolled(window.scrollY > 50)
+      setScrolled(window.scrollY > 50);
     }
-    window.addEventListener("scroll", onScroll, { passive: true })
-    return () => window.removeEventListener("scroll", onScroll)
-  }, [])
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-      e.preventDefault()
-      setIsOpen(false)
-      const id = href.slice(1)
-      const el = document.getElementById(id)
+      e.preventDefault();
+      setIsOpen(false);
+      const id = href.slice(1);
+      const el = document.getElementById(id);
       if (el) {
-        el.scrollIntoView({ behavior: "smooth", block: "start" })
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
         // Update URL hash without jumping
-        window.history.pushState(null, "", href)
+        window.history.pushState(null, "", href);
       }
     },
-    []
-  )
+    [],
+  );
 
   return (
     <nav
@@ -79,23 +89,23 @@ export function Navigation() {
         <a
           href="#"
           onClick={(e) => {
-            e.preventDefault()
-            window.scrollTo({ top: 0, behavior: "smooth" })
-            window.history.pushState(null, "", " ")
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+            window.history.pushState(null, "", " ");
           }}
           className="flex items-center gap-2 text-foreground transition-opacity hover:opacity-70"
           aria-label="Torna in cima alla pagina"
         >
           <Compass className="h-5 w-5 text-gold" strokeWidth={1.5} />
           <span className="font-serif text-sm font-semibold tracking-wide">
-            Il Ritrovo
+            {isActive ? "La Resistenza" : "Il Ritrovo"}
           </span>
         </a>
 
         {/* Desktop links */}
         <div className="hidden items-center gap-8 md:flex">
-          {links.map((link) => {
-            const isActive = activeId === link.href.slice(1)
+          {activeLinks.map((link) => {
+            const isActive = activeId === link.href.slice(1);
             return (
               <a
                 key={link.href}
@@ -114,7 +124,7 @@ export function Navigation() {
                   }`}
                 />
               </a>
-            )
+            );
           })}
         </div>
 
@@ -138,7 +148,7 @@ export function Navigation() {
         <div className="border-t border-gold/10 bg-parchment/95 backdrop-blur-md md:hidden">
           <div className="flex flex-col gap-1 px-6 py-4">
             {links.map((link) => {
-              const isActive = activeId === link.href.slice(1)
+              const isActive = activeId === link.href.slice(1);
               return (
                 <a
                   key={link.href}
@@ -155,11 +165,11 @@ export function Navigation() {
                   )}
                   {link.label}
                 </a>
-              )
+              );
             })}
           </div>
         </div>
       )}
     </nav>
-  )
+  );
 }

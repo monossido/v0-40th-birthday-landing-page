@@ -1,25 +1,30 @@
-"use client"
+"use client";
 
-import { useActionState, useRef, useEffect } from "react"
-import { Send, Check, ScrollText, AlertCircle } from "lucide-react"
-import { GoldDivider } from "./gold-divider"
-import { subscribeAction, type FormState } from "@/app/actions"
+import { useActionState, useRef, useEffect } from "react";
+import { Send, Check, ScrollText, AlertCircle } from "lucide-react";
+import { GoldDivider } from "./gold-divider";
+import { subscribeAction, type FormState } from "@/app/actions";
+import { useEasterEgg } from "@/contexts/easter-egg-context";
 
 const initialState: FormState = {
   status: "idle",
   message: "",
-}
+};
 
 export function SignupSection() {
-  const [state, formAction, isPending] = useActionState(subscribeAction, initialState)
-  const formRef = useRef<HTMLFormElement>(null)
+  const [state, formAction, isPending] = useActionState(
+    subscribeAction,
+    initialState,
+  );
+  const formRef = useRef<HTMLFormElement>(null);
+  const { isActive } = useEasterEgg();
 
   // Reset form on success
   useEffect(() => {
     if (state.status === "success") {
-      formRef.current?.reset()
+      formRef.current?.reset();
     }
-  }, [state.status])
+  }, [state.status]);
 
   return (
     <section
@@ -38,7 +43,7 @@ export function SignupSection() {
           <GoldDivider />
           <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
             {
-              "Le date definitive (Ven/Sab o Sab/Dom) verranno comunicate presto. Lascia la tua email per ricevere tutti i dettagli."
+              "Le date definitive (Ven/Sab o Sab/Dom) verranno comunicate presto. Lascia la tua email se ne hai il coraggio."
             }
           </p>
         </div>
@@ -51,9 +56,7 @@ export function SignupSection() {
             <p className="font-serif text-lg font-semibold text-foreground">
               Grazie!
             </p>
-            <p className="text-sm text-muted-foreground">
-              {state.message}
-            </p>
+            <p className="text-sm text-muted-foreground">{state.message}</p>
           </div>
         ) : (
           <form
@@ -61,6 +64,21 @@ export function SignupSection() {
             action={formAction}
             className="flex flex-col items-center gap-4 sm:flex-row sm:gap-3"
           >
+            <input
+              type="hidden"
+              name="isActive"
+              value={isActive ? "true" : "false"}
+            />
+            <div className="hidden" aria-hidden="true">
+              <label htmlFor="company-input">Company</label>
+              <input
+                id="company-input"
+                type="text"
+                name="company"
+                tabIndex={-1}
+                autoComplete="off"
+              />
+            </div>
             <label htmlFor="email-input" className="sr-only">
               Il tuo indirizzo email
             </label>
@@ -70,6 +88,7 @@ export function SignupSection() {
                 type="email"
                 name="email"
                 required
+                autoComplete="email"
                 placeholder="La tua email..."
                 className="w-full rounded-lg border border-border bg-parchment px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-gold/40 focus:outline-none focus:ring-2 focus:ring-gold/20"
               />
@@ -88,7 +107,10 @@ export function SignupSection() {
             </button>
             {state.status === "error" && (
               <div className="flex w-full items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-2.5 sm:w-auto">
-                <AlertCircle className="h-4 w-4 flex-shrink-0 text-destructive" strokeWidth={1.5} />
+                <AlertCircle
+                  className="h-4 w-4 flex-shrink-0 text-destructive"
+                  strokeWidth={1.5}
+                />
                 <p className="text-xs text-destructive">{state.message}</p>
               </div>
             )}
@@ -96,5 +118,5 @@ export function SignupSection() {
         )}
       </div>
     </section>
-  )
+  );
 }

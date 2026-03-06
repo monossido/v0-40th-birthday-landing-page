@@ -1,38 +1,114 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { Compass, Sparkles } from "lucide-react"
-import { GoldDivider } from "./gold-divider"
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Compass, Sparkles } from "lucide-react";
+import { GoldDivider } from "./gold-divider";
+import { useEasterEgg } from "@/contexts/easter-egg-context";
 
 function computeRemaining(targetTimestamp: number) {
-  const diff = Math.max(0, targetTimestamp - Date.now())
-  return Math.floor(diff / 1000)
+  const diff = Math.max(0, targetTimestamp - Date.now());
+  return Math.floor(diff / 1000);
 }
 
 function useCountdown(targetTimestamp: number) {
   const [totalSeconds, setTotalSeconds] = useState(() =>
-    computeRemaining(targetTimestamp)
-  )
+    computeRemaining(targetTimestamp),
+  );
 
   useEffect(() => {
     const id = setInterval(() => {
-      setTotalSeconds(computeRemaining(targetTimestamp))
-    }, 1000)
-    return () => clearInterval(id)
-  }, [targetTimestamp])
+      setTotalSeconds(computeRemaining(targetTimestamp));
+    }, 1000);
+    return () => clearInterval(id);
+  }, [targetTimestamp]);
 
-  const days = Math.floor(totalSeconds / 86400)
-  const hours = Math.floor((totalSeconds % 86400) / 3600)
-  const minutes = Math.floor((totalSeconds % 3600) / 60)
-  const seconds = totalSeconds % 60
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
 
-  return { days, hours, minutes, seconds }
+  return { days, hours, minutes, seconds };
 }
 
-const BIRTHDAY_TIMESTAMP = new Date("2026-03-07T00:00:00").getTime()
+const BIRTHDAY_TIMESTAMP = new Date("2026-05-22T00:00:00").getTime();
 
 export function HeroSection() {
-  const { days, hours, minutes, seconds } = useCountdown(BIRTHDAY_TIMESTAMP)
+  const { days, hours, minutes, seconds } = useCountdown(BIRTHDAY_TIMESTAMP);
+  const { isActive, toggle } = useEasterEgg();
+  const tapCount = useRef(0);
+  const tapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const skipNextClick = useRef(false);
+  const shineTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [isShining, setIsShining] = useState(false);
+
+  const handleCompassClick = useCallback(() => {
+    if (skipNextClick.current) {
+      skipNextClick.current = false;
+      return;
+    }
+
+    tapCount.current += 1;
+    if (tapTimer.current) clearTimeout(tapTimer.current);
+    if (tapCount.current >= 3) {
+      tapCount.current = 0;
+      toggle();
+    } else {
+      tapTimer.current = setTimeout(() => {
+        tapCount.current = 0;
+      }, 1200);
+    }
+  }, [toggle]);
+
+  const triggerShine = useCallback(() => {
+    setIsShining(true);
+    if (shineTimer.current) clearTimeout(shineTimer.current);
+    shineTimer.current = setTimeout(() => {
+      setIsShining(false);
+    }, 450);
+  }, []);
+
+  const handlePointerDown = useCallback(
+    (e: React.PointerEvent<HTMLButtonElement>) => {
+      if (e.pointerType === "mouse") return;
+      if (longPressTimer.current) clearTimeout(longPressTimer.current);
+      longPressTimer.current = setTimeout(() => {
+        skipNextClick.current = true;
+        tapCount.current = 0;
+        toggle();
+      }, 700);
+    },
+    [toggle],
+  );
+
+  const handlePointerUp = useCallback(() => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  }, []);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      triggerShine();
+    }, 4000);
+
+    return () => clearInterval(id);
+  }, [triggerShine]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      triggerShine();
+    }, 1000);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (tapTimer.current) clearTimeout(tapTimer.current);
+      if (longPressTimer.current) clearTimeout(longPressTimer.current);
+      if (shineTimer.current) clearTimeout(shineTimer.current);
+    };
+  }, []);
 
   return (
     <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 py-20">
@@ -45,40 +121,65 @@ export function HeroSection() {
         aria-hidden="true"
       />
 
-      {/* Decorative top ring icon */}
+      {/* Decorative top ring icon — 3 click = easter egg */}
       <div className="mb-6 flex items-center justify-center">
-        <div className="relative flex h-16 w-16 items-center justify-center rounded-full border border-gold/30 bg-parchment-dark/50">
+        <button
+          onClick={handleCompassClick}
+          onPointerDown={handlePointerDown}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerUp}
+          onPointerLeave={handlePointerUp}
+          className="group relative flex h-16 w-16 cursor-crosshair items-center justify-center rounded-full border border-gold/30 bg-parchment-dark/50 transition-transform active:scale-95"
+          aria-label="Decorazione"
+        >
+          <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-full">
+            <span
+              className={`absolute -top-3 -left-8 h-24 w-7 rotate-12 bg-gradient-to-r from-transparent via-gold/65 to-transparent blur-[1px] transition-all duration-500 ${
+                isShining
+                  ? "translate-x-24 opacity-100"
+                  : "translate-x-0 opacity-0"
+              }`}
+            />
+          </div>
           <Compass className="h-7 w-7 text-gold" strokeWidth={1.5} />
           <div className="absolute -inset-1 rounded-full border border-gold/10" />
-        </div>
+        </button>
       </div>
 
       {/* Subtitle */}
       <p className="mb-4 text-sm font-medium uppercase tracking-[0.3em] text-muted-foreground">
-        Un raduno leggendario
+        {isActive
+          ? "Bravo, sei entrato nel dark side"
+          : 'Dite "Amici" ed entrate'}
       </p>
 
       {/* Title */}
       <h1 className="text-balance text-center font-serif text-5xl font-bold leading-tight tracking-tight text-foreground md:text-7xl lg:text-8xl">
-        Il Ritrovo dei 40
+        {isActive ? "La Resistenza dei 40" : "Il Ritrovo dei 40"}
       </h1>
 
       <GoldDivider />
 
       {/* Event date */}
       <p className="mt-2 text-center text-lg leading-relaxed text-muted-foreground md:text-xl">
-        {"Un weekend di festa \u2014 23 e 24 Maggio 2025"}
+        {isActive
+          ? "Da sempre \u2014 contro il pensiero unico"
+          : "Un weekend a lungo atteso \u2014 23 e 24 Maggio 2025"}
       </p>
       <p className="mt-1 text-center text-sm text-muted-foreground/70">
-        Villa Todeschini, Noventa Padovana
+        {isActive
+          ? "Dovunque arda ancora una scintilla"
+          : "Villa Todeschini, Noventa Padovana"}
       </p>
 
-      {/* Countdown to birthday (March 7) */}
+      {/* Countdown to the event */}
       <div className="mt-10 flex flex-col items-center">
         <div className="mb-3 flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-gold/70" strokeWidth={1.5} />
           <p className="text-xs uppercase tracking-[0.25em] text-gold">
-            Conto alla rovescia al compleanno
+            {isActive
+              ? "Tempo che resta a Israele prima di soccombere"
+              : "Conto alla rovescia al ritrovo"}
           </p>
           <Sparkles className="h-4 w-4 text-gold/70" strokeWidth={1.5} />
         </div>
@@ -91,7 +192,13 @@ export function HeroSection() {
           <span className="self-center font-serif text-xl text-gold/40">:</span>
           <CountdownUnit value={seconds} label="Sec" />
         </div>
-        <p className="mt-3 text-xs text-muted-foreground/60">7 Marzo 2026</p>
+        <p className="mt-3 text-xs text-muted-foreground/60">
+          {new Date(BIRTHDAY_TIMESTAMP).toLocaleDateString("it-IT", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          })}
+        </p>
       </div>
 
       {/* Scroll hint */}
@@ -100,7 +207,7 @@ export function HeroSection() {
         <div className="h-2 w-2 rounded-full border border-gold/30" />
       </div>
     </section>
-  )
+  );
 }
 
 function CountdownUnit({ value, label }: { value: number; label: string }) {
@@ -115,5 +222,5 @@ function CountdownUnit({ value, label }: { value: number; label: string }) {
         {label}
       </span>
     </div>
-  )
+  );
 }

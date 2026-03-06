@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter, Playfair_Display } from 'next/font/google'
-import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
+import { EasterEggProvider } from '@/contexts/easter-egg-context'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -37,8 +37,9 @@ export default function RootLayout({
   return (
     <html lang="it" className={`${inter.variable} ${playfair.variable} scroll-smooth`}>
       <body className="font-sans antialiased">
-        {children}
-        <Analytics />
+        <EasterEggProvider>
+          {children}
+        </EasterEggProvider>
       </body>
     </html>
   )

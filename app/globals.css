@@ -116,6 +116,37 @@
   --color-parchment-dark: var(--parchment-dark);
 }
 
+/* Easter egg: punk mode */
+.punk {
+  --background: #0a0a0a;
+  --foreground: #f0f0f0;
+  --card: #111111;
+  --card-foreground: #f0f0f0;
+  --popover: #0a0a0a;
+  --popover-foreground: #f0f0f0;
+  --primary: #ff0050;
+  --primary-foreground: #0a0a0a;
+  --secondary: #00ff41;
+  --secondary-foreground: #0a0a0a;
+  --muted: #1a1a1a;
+  --muted-foreground: #aaaaaa;
+  --accent: #ff0050;
+  --accent-foreground: #0a0a0a;
+  --destructive: #ff0050;
+  --destructive-foreground: #0a0a0a;
+  --border: #ff0050;
+  --input: #1a1a1a;
+  --ring: #ff0050;
+  --gold: #ff0050;
+  --gold-light: #ff4d7d;
+  --terracotta: #ff0050;
+  --terracotta-dark: #cc0040;
+  --sage: #00ff41;
+  --sage-dark: #00cc33;
+  --parchment: #0a0a0a;
+  --parchment-dark: #111111;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
