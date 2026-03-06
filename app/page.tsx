@@ -1,10 +1,10 @@
-import { Navigation } from "@/components/navigation"
-import { HeroSection } from "@/components/hero-section"
-import { LocationSection } from "@/components/location-section"
-import { TimelineSection } from "@/components/timeline-section"
-import { SignupSection } from "@/components/signup-section"
-import { Footer } from "@/components/footer"
-import { AnalyticsTracker } from "@/components/analytics-tracker"
+import { Navigation } from "@/components/navigation";
+import { HeroSection } from "@/components/hero-section";
+import { LocationSection } from "@/components/location-section";
+import { TimelineSection } from "@/components/timeline-section";
+import { SignupSection } from "@/components/signup-section";
+import { Footer } from "@/components/footer";
+import { AnalyticsTracker } from "@/components/analytics-tracker";
 
 export default function Page() {
   return (
@@ -17,5 +17,7 @@ export default function Page() {
       <SignupSection />
       <Footer />
     </main>
-  )
+  );
 }
+
+export const dynamic = "force-dynamic";
