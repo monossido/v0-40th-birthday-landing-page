@@ -30,7 +30,7 @@ function useCountdown(targetTimestamp: number) {
   return { days, hours, minutes, seconds };
 }
 
-const BIRTHDAY_TIMESTAMP = new Date("2026-05-22T00:00:00").getTime();
+const BIRTHDAY_TIMESTAMP = new Date("2026-05-22T18:00:00").getTime();
 
 export function HeroSection() {
   const { days, hours, minutes, seconds } = useCountdown(BIRTHDAY_TIMESTAMP);
@@ -164,7 +164,7 @@ export function HeroSection() {
       <p className="mt-2 text-center text-lg leading-relaxed text-muted-foreground md:text-xl">
         {isActive
           ? "Da sempre \u2014 contro il pensiero unico"
-          : "Un weekend a lungo atteso \u2014 23 e 24 Maggio 2025"}
+          : "Un weekend a lungo atteso \u2014 22 e 23 Maggio 2025"}
       </p>
       <p className="mt-1 text-center text-sm text-muted-foreground/70">
         {isActive

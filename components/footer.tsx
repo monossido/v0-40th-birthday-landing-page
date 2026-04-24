@@ -17,7 +17,7 @@ export function Footer() {
       <p className="text-xs text-muted-foreground/50">
         {isActive
           ? "In direzione ostinata e contraria"
-          : "Noventa Padovana, Maggio 2025"}
+          : "Noventa Padovana, 22-23 Maggio 2025"}
       </p>
     </footer>
   );

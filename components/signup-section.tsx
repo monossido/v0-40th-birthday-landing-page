@@ -43,7 +43,7 @@ export function SignupSection() {
           <GoldDivider />
           <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
             {
-              "Le date definitive (Ven/Sab o Sab/Dom) verranno comunicate presto. Lascia la tua email se ne hai il coraggio."
+              "Il programma potrebbe cambiare, regole e tips&tricks potrebbero essere rivelati, inserisci la tua email per rimanere aggiornato!"
             }
           </p>
         </div>

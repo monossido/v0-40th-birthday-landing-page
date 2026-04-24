@@ -172,7 +172,7 @@ export function TimelineSection() {
         {/* Day 1 */}
         <DayHeader
           day={1}
-          title="Giorno 1"
+          title="Venerdì 22 Maggio"
           subtitle={isActive ? "L\u2019Infiltrazione" : "L\u2019Arrivo"}
         />
         <div className="relative ml-4 border-l border-gold/20 pl-8 md:ml-8">
@@ -190,7 +190,7 @@ export function TimelineSection() {
         {/* Day 2 */}
         <DayHeader
           day={2}
-          title="Giorno 2"
+          title="Sabato 23 Maggio"
           subtitle={isActive ? "La Resa dei Conti" : "La Grande Giornata"}
         />
         <div className="relative ml-4 border-l border-gold/20 pl-8 md:ml-8">
