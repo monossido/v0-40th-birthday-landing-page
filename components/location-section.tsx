@@ -51,32 +51,44 @@ export function LocationSection() {
               {isActive ? "Quartier Generale" : "Villa Todeschini"}
             </h3>
             <p className="text-xs uppercase tracking-[0.2em] text-gold">
-              {isActive ? "Zona Franca, Fuori dal Sistema" : "Noventa Padovana, Padova"}
+              {isActive
+                ? "Zona Franca, Fuori dal Sistema"
+                : "Noventa Padovana, Padova"}
             </p>
             {isActive ? (
               <>
                 <p className="leading-relaxed text-muted-foreground">
-                  I travel influencer ti vendono l&apos;avventura da un hotel a 5 stelle,
-                  con il tramonto perfetto e il cappuccino fotogenico. Noi ci ritroviamo
-                  davvero — senza filtri, senza brand deal, senza stories.
+                  I travel influencer ti vendono l&apos;avventura da un hotel a
+                  5 stelle, con il tramonto perfetto e il cappuccino fotogenico.
+                  Noi ci ritroviamo davvero — senza filtri, senza brand deal,
+                  senza stories.
                 </p>
                 <p className="leading-relaxed text-muted-foreground">
-                  Un posto fisico, persone reali, conversazioni vere. Quello che Apple
-                  non può venderti e Washington non può controllare.
+                  Un posto fisico, persone reali, conversazioni vere. Quello che
+                  Apple non può venderti e Washington non può controllare.
                 </p>
               </>
             ) : (
               <>
                 <p className="leading-relaxed text-muted-foreground">
-                  24 ore, o più, per ritrovarsi fra amici, visitatori, benefattori o
-                  lontani parenti! <br />
+                  24 ore, o più, per ritrovarsi fra amici, visitatori,
+                  benefattori o lontani parenti! <br />
                   <br />
-                  Vieni solo per la prima serata nerd, per la gara di pizze a pranzo
-                  o per il cuore del raduno la sera. Oppure resta per tutto il
-                  weekend, l'importante è che vieni.
+                  Vieni solo per la prima serata nerd, per la gara di pizze a
+                  pranzo o per il cuore del raduno la sera. Oppure resta per
+                  tutto il weekend, l'importante è che vieni.
                 </p>
                 <p className="leading-relaxed text-muted-foreground">
-                  {"...grandi falò, birra di malto, carne stagionata con l'osso!"}
+                  {
+                    "...grandi falò, birra di malto, carne stagionata con l'osso!"
+                  }
+                </p>
+                <p className="leading-relaxed text-muted-foreground">
+                  🎁 Capitolo regali: Qualcuno ha iniziato a chiedere, la vostra
+                  presenza è già un regalo. Se però volete fare un gesto,
+                  preferirei una donazione a un’associazione o una ONG che
+                  sapete che approverei. Se siete indecisi su quale scegliere,
+                  scrivetemi.
                 </p>
               </>
             )}

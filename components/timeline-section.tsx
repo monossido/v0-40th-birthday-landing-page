@@ -69,14 +69,22 @@ const events: TimelineEvent[] = [
     day: 2,
   },
   {
-    time: "18:00",
-    title: "Aperitivo \u2014 Music & Vibes",
-    description: "Mi pentirò dell'accompagnamento musicale scelto?",
+    time: "16:00",
+    title: "Kids",
+    description: "Angolo bambini con disegni e giochi.",
     icon: Music,
     day: 2,
   },
   {
-    time: "20:00",
+    time: "17:00",
+    title: "Chill & Vibes",
+    description:
+      "Se avete strumenti musicali portateli! Se avete un’attività, un laboratorio da proporre o se aspettavate solo una scusa per testare una nuova ricetta... fatevi avanti!",
+    icon: Music,
+    day: 2,
+  },
+  {
+    time: "19:00",
     title: "Grigliata e Sapori dal Mondo",
     description:
       "Il gran finale: una cena epica con sapori da ogni angolo della Terra di Mezzo... e oltre.",
